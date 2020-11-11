@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tabela Brasileirão-2020</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <style type="text/css">
+        .escudo {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+    <div id="app" class="container">
+        <div class="row">
+            <h3>Campeonato Brasileiro - Série A - 2020</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary" @click="criarNovoJogo">Novo jogo</button>
+            </div>
+        </div>
+
+        <form class="form-inline">
+            <input type="text" class="form-control col-md-1" v-model="novoJogo.casa.gols">
+            {{novoJogo.casa.time ? novoJogo.casa.time.nome: ''}}
+            <img :src="novoJogo.casa.time ? novoJogo.casa.time.escudo: ''" alt="">
+            <span>X</span>
+            <img :src="novoJogo.fora.time ? novoJogo.fora.time.escudo: ''" alt="">
+            {{novoJogo.fora.time ? novoJogo.fora.time.nome: ''}}
+            <input type="text" class="form-control col-md-1" v-model="novoJogo.fora.gols">
+            <button type="button" class="btn btn-danger" @click="fimJogo">Fim de jogo</button>
+        </form>
+
+
+        <div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Pontos</th>
+                    <th>GM</th>
+                    <th>GS</th>
+                    <th>SG</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="time in times">
+                    <td>
+                        <img :src="time.escudo" alt="" class="escudo">
+                        {{time.nome}}
+                    </td>
+                    <td>{{time.pontos}}</td>
+                    <td>{{time.gm}}</td>
+                    <td>{{time.gs}}</td>
+                    <td></td>
+                    <td></td>
+
+                </tr>
+            </tbody>
+        </table>
+        <input type="text" :id="gols+'id'" v-model="gols"> {{gols}}
+        <button class="btn btn-primary" @click="showAlert">Fim de jogo</button>
+    </div>
+    <script>
+
+        class Time {
+            constructor(nome, escudo) {
+                this.nome = nome;
+                this.escudo = escudo;
+
+                this.pontos = 0;
+                this.gm = 0;
+                this.gs = 0;
+            }
+
+            fimJogo(timeVisitante, golsMarcados, golsSofridos) {
+                if (this.foiEmpate(golsMarcados, golsSofridos)) {
+                    this.empate(golsMarcados, golsSofridos);
+                    timeVisitante.empate(golsMarcados, golsSofridos)
+
+                }
+
+                if (this.foiVitoria(golsMarcados, golsSofridos)) {
+                    this.vitoria(golsMarcados, golsSofridos);
+                    timeVisitante.derrota(golsSofridos, golsMarcados);
+
+                } else {
+                    this.derrota(golsMarcados, golsSofridos)
+                    timeVisitante.vitoria(golsMarcados, golsSofridos);
+                }
+            }
+
+
+
+            foiEmpate(golsMarcados, golsSofridos) {
+                return golsMarcados === golsSofridos
+            }
+
+            foiVitoria(golsMarcados, golsSofridos) {
+                return golsMarcados > golsSofridos;
+            }
+
+            empate(golsMarcados, golsSofridos) {
+                this.atualizarInfo(1, golsMarcados, golsSofridos)
+            }
+
+            vitoria(golsMarcados, golsSofridos) {
+                this.atualizarInfo(3, golsMarcados, golsSofridos);
+            }
+
+            derrota(golsMarcados, golsSofridos) {
+                this.atualizarInfo(0, golsMarcados, golsSofridos);
+            }
+
+            atualizarInfo(pontos, golsMarcados, golsSofridos) {
+                this.pontos += pontos;
+                this.gm += golsMarcados;
+                this.gs += golsSofridos;
+            }
+        }
+
+        new Vue({
+            el: "#app",
+            data: {
+                gols: '2',
+                times: [
+                    new Time('Corinthians', 'img/corinthians.png'),
+                    new Time('Botafogo', 'img/botafogo.png'),
+                    new Time('Fluminense', 'img/fluminense.png'),
+                    new Time('Sport', 'img/sport.png'),
+                    new Time('RedBull Bragatino', 'img/rb.png'),
+                    new Time('Flamengo', 'img/fla.png'),
+                    new Time('Coritiba', 'img/coritiba.png'),
+                    new Time('Atlético-MG', 'img/atl-mg.png'),
+                    new Time('Atlético Parananese', 'img/atl-pr.png'),
+                    new Time('Bahia', 'img/bahia.png'),
+                    new Time('Fortaleza', 'img/fortaleza.png'),
+                    new Time('Ceará', 'img/ceara.png'),
+                    new Time('Góias', 'img/goias.png'),
+                    new Time('Atlético-GO', 'img/atl-go.png'),
+                    new Time('Palmeiras', 'img/palmeiras.png'),
+                    new Time('Santos', 'img/santos.png'),
+                    new Time('São Paulo', 'img/sao-paulo.png'),
+                    new Time('Internacional', 'img/internacional.png'),
+                    new Time('Grêmio', 'img/gremio.png'),
+                    new Time('Vasco', 'img/vasco.png')
+                ],
+                novoJogo: {
+                    casa: {
+                        time: null,
+                        gols: 0
+                    },
+                    fora: {
+                        time: null,
+                        gols: 0
+                    }
+                }
+            },
+            methods: {
+                showAlert() {
+                    alert('Fim de jogo')
+                },
+                pegarValor($event) {
+                    console.log($event)
+                },
+                criarNovoJogo() {
+                    let indiceCasa = Math.floor(Math.random() * 20),
+                        indiceFora = Math.floor(Math.random() * 20)
+
+                    this.novoJogo.casa.time = this.times[indiceCasa]
+                    this.novoJogo.casa.gols = 0;
+                    this.novoJogo.fora.time = this.times[indiceFora]
+                    this.novoJogo.casa.gols = 0;
+                    console.log(this.novoJogo);
+                },
+
+                fimJogo() {
+                    let golsMarcados = parseInt(this.novoJogo.casa.gols);
+                    let golsSofridos = parseInt(this.novoJogo.fora.gols);
+                    let timeAdversario = this.novoJogo.fora.time;
+                    let timeCasa = this.novoJogo.casa.time;
+                    timeCasa.fimJogo(timeAdversario, golsMarcados, golsSofridos);
+
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
+
+<!-- Data Binding Programção ---- HTML -->
+<!-- One way data binding -->
+<!-- two way data binding -- v-model-->

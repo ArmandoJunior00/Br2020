@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instância Vue</title>
+</head>
+
+<body>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+
+    <div id="app">
+        {{"Adição entre dois números:"}}
+        <input type="number" v-model="variavel"> +
+        <input type="number" v-model="variavel02"> =
+        {{parseInt(variavel) + parseInt(variavel02)}}
+    </div>
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                variavel: '',
+                variavel02: ''
+            }
+        })
+    </script>
+</body>
+
+</html>
